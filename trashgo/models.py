@@ -1,36 +1,29 @@
 from django.db import models
 
 
-class Location(models.Model):
-    user = models.ForeignKey('User', models.CASCADE)
-    time = models.DateTimeField()
-    longitude = models.FloatField()
-    latitude = models.FloatField()
-
-    def __str__(self):
-        return '{} , {}'.format(self.longitude, self.latitude)
-
-
-class User(models.Model):
+class Team(models.Model):
     TEAM_CHOICES = (
         ('RED', 'Team Red'),
         ('BLUE', 'Team Blue'),
         ('YELLOW', 'Team Yellow')
     )
+    name = models.CharField(
+        max_length=10,
+        choices=TEAM_CHOICES,
+        default='RED',
+    )
+    points = models.IntegerField()
+
+
+class User(models.Model):
 
     user_name = models.CharField(max_length=30)
 
     facebook_id = models.CharField(max_length=50)
 
-    team = models.CharField(
-        max_length=10,
-        choices=TEAM_CHOICES,
-        default='RED',
-    )
+    team = models.ForeignKey('Team', models.CASCADE)
 
     points = models.IntegerField()
-
-    locations = models.ManyToManyField(Location)
 
     def __str__(self):
         return self.user_name
@@ -39,9 +32,9 @@ class User(models.Model):
 class Hotspot(models.Model):
     longitude = models.FloatField()
     latitude = models.FloatField()
+    team = models.ForeignKey('Team', models.CASCADE)
     frequency = models.IntegerField()
 
-    def __str__(self):
-        return '{}, {}, {}visits'.format(self.longitude,
-                                         self.latitude,
-                                         self.frequency)
+    #class Meta:
+    #    unique_together = (("longitude", "latitude"),)
+

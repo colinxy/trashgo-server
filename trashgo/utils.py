@@ -20,11 +20,12 @@ def haversine(lon1, lat1, lon2, lat2):
     return m
 
 
-def updateHotspot(lon1, lat1):
+def updateHotspot(user, lon1, lat1):
     # Merge location with hotspot, or create one in position
-    hotspots = Hotspot.objects.all()
+    hotspots = Hotspot.objects.filter(team = user.team)
     mindist = 1000
     target = None
+    pointsUp = 0
 
     for hotspot in hotspots:
         dist = haversine(lon1, lat1, hotspot.longitude, hotspot.latitude)
@@ -34,12 +35,27 @@ def updateHotspot(lon1, lat1):
 
     if target is not None :
         target.frequency += 1
+        # Old site, team gets one point
         target.save()
+        pointsUp = 1
 
     else :
-        newHotspot = Hotspot(longitude = lon1, latitude = lat1, frequency = 0);
-        newHotspot.save()
+        for team_ref in Team.objects.all():
+            newHotspot = Hotspot(longitude = lon1,
+                                 latitude  = lat1,
+                                 frequency = 0   ,
+                                 team = team_ref )
+            if team_ref == user.team:
+                newHotspot.frequency += 1
+            newHotspot.save()
 
+        # New site discovered. 3 points.
+        pointsUp = 3
+
+    user.points += pointsUp
+    user.save()
+    user.team.points += pointsUp
+    user.team.save()
 
 """
 Get related points according to the current bounds
@@ -49,20 +65,20 @@ http://stackoverflow.com/questions/14285963/google-maps-get-viewport-latitude-an
 bounds is a 4-tuple containing NE Lat, NE Lng, SW Lat, SW Lng
 """
 
-def getNearbyHotspots(bounds, scale = 1.0):
-    delta_lng = bounds[1] - bounds[3]
-    delta_lat = bounds[0] - bounds[2]
-    bounds[1] += delta_lng
-    bounds[3] -= delta_lng
-    bounds[0] += delta_lat
-    bounds[2] -= delta_lat
+def getNearbyHotspots(ne_lat, ne_lng, sw_lat, sw_lng, scale = 1.0):
+    delta_lng = ne_lng - sw_lng
+    delta_lat = ne_lat - sw_lat
+    ne_lng += delta_lng
+    sw_lng -= delta_lng
+    ne_lat += delta_lat
+    sw_lat -= delta_lat
 
-    q = Hotspot.objects.filter(longitude__lte=bounds[1],
-                           longitude__gte=bounds[3],
-                           latitude__lte = bounds[0],
-                           latitude__gte=bounds[2])
+    q = Hotspot.objects.filter(longitude__lte=ne_lng,
+                           longitude__gte=sw_lng,
+                           latitude__lte = ne_lat,
+                           latitude__gte=sw_lat)
 
-    return q.objects.all()
+    return q
 
 
 
