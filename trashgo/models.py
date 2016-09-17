@@ -30,8 +30,6 @@ class User(models.Model):
 
     points = models.IntegerField()
 
-    locations = models.ManyToManyField(Location)
-
     def __str__(self):
         return self.user_name
 
