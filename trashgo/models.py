@@ -7,6 +7,9 @@ class Location(models.Model):
     longitude = models.FloatField()
     latitude = models.FloatField()
 
+    def __str__(self):
+        return '{} , {}'.format(self.longitude, self.latitude)
+
 
 class User(models.Model):
     TEAM_CHOICES = (
@@ -29,8 +32,16 @@ class User(models.Model):
 
     locations = models.ManyToManyField(Location)
 
+    def __str__(self):
+        return self.user_name
+
 
 class Hotspot(models.Model):
     longitude = models.FloatField()
     latitude = models.FloatField()
     frequency = models.IntegerField()
+
+    def __str__(self):
+        return '{}, {}, {}visits'.format(self.longitude,
+                                         self.latitude,
+                                         self.frequency)
