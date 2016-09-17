@@ -20,9 +20,31 @@ def haversine(lon1, lat1, lon2, lat2):
     return m
 
 
-def updateHotspot(user, lon1, lat1):
+def updateHotspot(lon1, lat1):
+    hotspots = Hotspot.objects.all()
+    mindist = 1000
+    target = None
+
+    for hotspot in hotspots:
+        dist = haversine(lon1, lat1, hotspot.longitude, hotspot.latitude)
+        if dist < HOTSPOT_RADIUS and dist < mindist:
+            mindist = dist
+            target = hotspot
+
+    if target is not None:
+        target.frequency += 1
+        target.save()
+
+    else:
+        newHotspot = Hotspot(longitude = lon1,
+                             latitude  = lat1,
+                             frequency = 1)
+        newHotspot.save()
+
+
+def updateBin(user, lon1, lat1):
     # Merge location with hotspot, or create one in position
-    hotspots = Hotspot.objects.filter(team = user.team)
+    hotspots = Bin.objects.filter(team = user.team)
     mindist = 1000
     target = None
     pointsUp = 0
@@ -41,13 +63,13 @@ def updateHotspot(user, lon1, lat1):
 
     else :
         for team_ref in Team.objects.all():
-            newHotspot = Hotspot(longitude = lon1,
+            newBin = Bin(longitude = lon1,
                                  latitude  = lat1,
                                  frequency = 0   ,
                                  team = team_ref )
             if team_ref == user.team:
-                newHotspot.frequency += 1
-            newHotspot.save()
+                newBin.frequency += 1
+            newBin.save()
 
         # New site discovered. 3 points.
         pointsUp = 3

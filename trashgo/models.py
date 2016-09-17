@@ -32,8 +32,20 @@ class User(models.Model):
 class Hotspot(models.Model):
     longitude = models.FloatField()
     latitude = models.FloatField()
+    #team = models.ForeignKey('Team', models.CASCADE)
+    frequency = models.IntegerField()
+
+    class Meta:
+        unique_together = (("longitude", "latitude"),)
+
+
+class Bin(models.Model):
+    longitude = models.FloatField()
+    latitude = models.FloatField()
     team = models.ForeignKey('Team', models.CASCADE)
     frequency = models.IntegerField()
 
-    #class Meta:
-    #    unique_together = (("longitude", "latitude"),)
+    class Meta:
+        unique_together = (("longitude", "latitude"),)
+
+
