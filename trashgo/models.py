@@ -44,6 +44,3 @@ class Bin(models.Model):
     latitude = models.FloatField()
     team = models.ForeignKey('Team', models.CASCADE)
     frequency = models.IntegerField()
-
-    class Meta:
-        unique_together = (("longitude", "latitude"),)
