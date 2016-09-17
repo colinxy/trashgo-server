@@ -93,7 +93,20 @@ class HotspotWithinView(APIView):
 
 
 class BinWithinView(APIView):
-    pass
+    def get(self, request, ne_lat, ne_lng, sw_lat, sw_lng, format=None):
+        print(ne_lat, ne_lng, sw_lat, sw_lng)
+
+        try:
+            ne_lat, ne_lng, sw_lat, sw_lng = \
+                map(float, (ne_lat, ne_lng, sw_lat, sw_lng))
+        except ValueError:
+            return Response(status=status.HTTP_400_BAD_REQUEST)
+
+        serializer = BinSerializer(getNearbyBins(ne_lat, ne_lng,
+                                                         sw_lat, sw_lng),
+                                       many=True)
+        return Response(serializer.data)
+
 
 
 class TeamView(APIView):

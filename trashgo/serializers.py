@@ -13,7 +13,7 @@ class HotspotSerializer(ModelSerializer):
 class BinSerializer(ModelSerializer):
     class Meta:
         model = Bin
-        fields = ("longitude", "latitude", "team")
+        fields = ("team", "longitude", "latitude")
 
 
 class TeamSerializer(ModelSerializer):
