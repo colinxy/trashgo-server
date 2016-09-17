@@ -22,6 +22,9 @@ class User(models.Model):
 
     locations = models.ManyToManyField(Location)
 
+    def __str__(self):
+        return self.user_name
+
 
 class Location(models.Model):
     user = models.ForeignKey('User', models.CASCADE)
@@ -29,10 +32,16 @@ class Location(models.Model):
     longitude = models.FloatField()
     latitude = models.FloatField()
 
+    def __str__(self):
+        return '{} , {}'.format(self.longitude, self.latitude)
+
 
 class Hotspot(models.Model):
     longitude = models.FloatField()
     latitude = models.FloatField()
     frequency = models.IntegerField()
+
+    def __str__(self):
+        return '{}, {}, {}visits'.format( self.longitude, self.latitude, self.frequency)
 
 
