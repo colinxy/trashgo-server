@@ -102,3 +102,20 @@ def getNearbyHotspots(ne_lat, ne_lng, sw_lat, sw_lng):
                                latitude__gte=sw_lat)
 
     return q
+
+
+def getNearbyBins(ne_lat, ne_lng, sw_lat, sw_lng):
+    delta_lng = ne_lng - sw_lng
+    delta_lat = ne_lat - sw_lat
+    ne_lng += delta_lng
+    sw_lng -= delta_lng
+    ne_lat += delta_lat
+    sw_lat -= delta_lat
+
+    q = Bin.objects.filter(team=Team.objects.all()[0])
+                   .filter(longitude__lte=ne_lng,
+                           longitude__gte=sw_lng,
+                           latitude__lte=ne_lat,
+                           latitude__gte=sw_lat)
+
+
