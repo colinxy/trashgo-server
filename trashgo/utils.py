@@ -112,11 +112,10 @@ def getNearbyBins(ne_lat, ne_lng, sw_lat, sw_lng):
     ne_lat += delta_lat
     sw_lat -= delta_lat
 
-    q = Bin.objects.filter(team=Team.objects.all()[0])
-                   .filter(longitude__lte=ne_lng,
-                           longitude__gte=sw_lng,
-                           latitude__lte=ne_lat,
-                           latitude__gte=sw_lat)
+    q = Bin.objects.filter(team=Team.objects.all()[0]).\
+        filter(longitude__lte=ne_lng,
+               longitude__gte=sw_lng,
+               latitude__lte=ne_lat,
+               latitude__gte=sw_lat)
 
     return q
-
