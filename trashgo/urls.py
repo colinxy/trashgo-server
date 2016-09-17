@@ -17,6 +17,7 @@ urlpatterns = [
         views.HotspotWithinView.as_view()),
     url(r"^users/$", views.UserView.as_view()),
     url(r"^teams/$", views.TeamView.as_view()),
+    url(r"^bins/$", views.BinView.as_view()),
 ]
 
 # urlpatterns = format_suffix_patterns(urlpatterns)

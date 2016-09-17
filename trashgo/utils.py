@@ -1,5 +1,5 @@
 from math import radians, cos, sin, asin, sqrt
-from .models import User, Team, Hotspot
+from .models import Team, Hotspot, Bin
 
 HOTSPOT_RADIUS = 20
 
@@ -36,15 +36,15 @@ def updateHotspot(lon1, lat1):
         target.save()
 
     else:
-        newHotspot = Hotspot(longitude = lon1,
-                             latitude  = lat1,
-                             frequency = 1)
+        newHotspot = Hotspot(longitude=lon1,
+                             latitude=lat1,
+                             frequency=1)
         newHotspot.save()
 
 
 def updateBin(user, lon1, lat1):
     # Merge location with hotspot, or create one in position
-    hotspots = Bin.objects.filter(team = user.team)
+    hotspots = Bin.objects.filter(team=user.team)
     mindist = 1000
     target = None
     pointsUp = 0
@@ -55,18 +55,18 @@ def updateBin(user, lon1, lat1):
             mindist = dist
             target = hotspot
 
-    if target is not None :
+    if target is not None:
         target.frequency += 1
         # Old site, team gets one point
         target.save()
         pointsUp = 1
 
-    else :
+    else:
         for team_ref in Team.objects.all():
-            newBin = Bin(longitude = lon1,
-                                 latitude  = lat1,
-                                 frequency = 0   ,
-                                 team = team_ref )
+            newBin = Bin(longitude=lon1,
+                         latitude=lat1,
+                         frequency=0,
+                         team=team_ref)
             if team_ref == user.team:
                 newBin.frequency += 1
             newBin.save()

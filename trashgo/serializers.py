@@ -1,13 +1,14 @@
 
 from rest_framework.serializers import ModelSerializer
 
-from .models import Hotspot, Team, User
+from .models import Bin, Hotspot, Team, User
 
 
 class HotspotSerializer(ModelSerializer):
     class Meta:
         model = Hotspot
         fields = ("longitude", "latitude")
+
 
 class BinSerializer(ModelSerializer):
     class Meta:

@@ -6,9 +6,10 @@ from rest_framework.parsers import JSONParser
 from rest_framework.response import Response
 from rest_framework.views import APIView
 
-from .models import Hotspot, Team, User
-from .serializers import HotspotSerializer, TeamSerializer, UserSerializer
-from .utils import updateHotspot, getNearbyHotspots
+from .models import Bin, Hotspot, Team, User
+from .serializers import (HotspotSerializer, TeamSerializer,
+                          UserSerializer, BinSerializer)
+from .utils import updateHotspot, getNearbyHotspots, updateBin
 
 
 # a public API? Yeah, we know, works for the demo
@@ -45,13 +46,14 @@ class HotspotView(APIView):
         updateHotspot(longitude, latitude)
         return Response(status=status.HTTP_201_CREATED)
 
+
 class BinView(APIView):
     authentication_classes = (CsrfExemptSessionAuthentication,
                               BasicAuthentication)
 
     def get(self, request, format=None):
-        hotspots = Hotspot.objects.all()
-        serializer = HotspotSerializer(hotspots, many=True)
+        hotspots = Bin.objects.all()
+        serializer = BinSerializer(hotspots, many=True)
 
         # print(serializer)
         return Response(serializer.data)
@@ -117,11 +119,10 @@ class UserView(APIView):
         data = JSONParser().parse(request)
         print(data)
 
-        user = User(user_name = data["user_name"],
-                    team = data["team"],
-                    facebook_id = data["facebook_id"],
-                    points = 0)
+        user = User(user_name=data["user_name"],
+                    team=data["team"],
+                    facebook_id=data["facebook_id"],
+                    points=0)
+        user.save()
 
         return Response(status=status.HTTP_201_CREATED)
-
-
