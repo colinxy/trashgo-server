@@ -84,8 +84,8 @@ DATABASES = {
         'ENGINE': 'django.db.backends.postgresql_psycopg2',
         'NAME': 'trashgo',
         'USER': 'trashgo',
-        'PASSWORD': 'trashgogogo',
-        'HOST': '104.236.211.50',
+        'PASSWORD': 'trashgogogo',  # this server will be gone by the time
+        'HOST': '104.236.211.50',   # hackathon is done, so don't you try it
         'PORT': '',
     }
 }

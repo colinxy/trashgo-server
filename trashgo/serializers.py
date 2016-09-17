@@ -7,7 +7,7 @@ from .models import Hotspot, Team, User
 class HotspotSerializer(ModelSerializer):
     class Meta:
         model = Hotspot
-        fields = ("longitude", "latitude", "team", "frequency")
+        fields = ("longitude", "latitude", "team")
 
 
 class TeamSerializer(ModelSerializer):

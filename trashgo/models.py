@@ -37,4 +37,3 @@ class Hotspot(models.Model):
 
     #class Meta:
     #    unique_together = (("longitude", "latitude"),)
-
