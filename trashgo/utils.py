@@ -20,7 +20,7 @@ def haversine(lon1, lat1, lon2, lat2):
     return m
 
 
-def updateHotspot(lon1, lat1):
+def updateHotspot(lat1, lon1):
     hotspots = Hotspot.objects.all()
     mindist = 1000
     target = None
@@ -42,7 +42,7 @@ def updateHotspot(lon1, lat1):
         newHotspot.save()
 
 
-def updateBin(user, lon1, lat1):
+def updateBin(user, lat1, lon1):
     # Merge location with hotspot, or create one in position
     hotspots = Bin.objects.filter(team=user.team)
     mindist = 1000
