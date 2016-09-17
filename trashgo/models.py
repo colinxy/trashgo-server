@@ -1,6 +1,13 @@
 from django.db import models
 
-# Create your models here.
+
+class Location(models.Model):
+    user = models.ForeignKey('User', models.CASCADE)
+    time = models.DateTimeField()
+    longitude = models.FloatField()
+    latitude = models.FloatField()
+
+
 class User(models.Model):
     TEAM_CHOICES = (
         ('RED', 'Team Red'),
@@ -23,16 +30,7 @@ class User(models.Model):
     locations = models.ManyToManyField(Location)
 
 
-class Location(models.Model):
-    user = models.ForeignKey('User', models.CASCADE)
-    time = models.DateTimeField()
-    longitude = models.FloatField()
-    latitude = models.FloatField()
-
-
 class Hotspot(models.Model):
     longitude = models.FloatField()
     latitude = models.FloatField()
     frequency = models.IntegerField()
-
-
