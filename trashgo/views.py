@@ -21,7 +21,7 @@ class HotspotView(APIView):
     authentication_classes = (CsrfExemptSessionAuthentication,
                               BasicAuthentication)
 
-    def get(self, request, formaat=None):
+    def get(self, request, format=None):
         hotspots = Hotspot.objects.all()
         serializer = HotspotSerializer(hotspots, many=True)
 
@@ -49,7 +49,7 @@ class BinView(APIView):
     authentication_classes = (CsrfExemptSessionAuthentication,
                               BasicAuthentication)
 
-    def get(self, request, formaat=None):
+    def get(self, request, format=None):
         hotspots = Hotspot.objects.all()
         serializer = HotspotSerializer(hotspots, many=True)
 
@@ -61,7 +61,7 @@ class BinView(APIView):
         # print(data)
 
         try:
-            facebook_id = data["facebook_id"]
+            facebook_id = data["team"]
             user = User.objects.get(facebook_id=facebook_id)
             longitude = data["longitude"]
             latitude = data["latitude"]
