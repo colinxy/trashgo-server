@@ -118,4 +118,5 @@ def getNearbyBins(ne_lat, ne_lng, sw_lat, sw_lng):
                            latitude__lte=ne_lat,
                            latitude__gte=sw_lat)
 
+    return q
 
