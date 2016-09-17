@@ -83,6 +83,8 @@ class HotspotWithinView(APIView):
         try:
             ne_lat, ne_lng, sw_lat, sw_lng = \
                 map(float, (ne_lat, ne_lng, sw_lat, sw_lng))
+            if not (-90 < sw_lat < nw_lat < 90 and -180 <= sw_lng < ne_lng <= 180):
+                raise ValueError
         except ValueError:
             return Response(status=status.HTTP_400_BAD_REQUEST)
 

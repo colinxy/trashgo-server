@@ -91,10 +91,13 @@ bounds is a 4-tuple containing NE Lat, NE Lng, SW Lat, SW Lng
 def getNearbyHotspots(ne_lat, ne_lng, sw_lat, sw_lng):
     delta_lng = ne_lng - sw_lng
     delta_lat = ne_lat - sw_lat
-    ne_lng += delta_lng
-    sw_lng -= delta_lng
-    ne_lat += delta_lat
-    sw_lat -= delta_lat
+
+    if delta_lng < 1:
+        ne_lng += delta_lng
+        sw_lng -= delta_lng
+    if delta_lat < 1:
+        ne_lat += delta_lat
+        sw_lat -= delta_lat
 
     q = Hotspot.objects.filter(longitude__lte=ne_lng,
                                longitude__gte=sw_lng,
@@ -107,10 +110,13 @@ def getNearbyHotspots(ne_lat, ne_lng, sw_lat, sw_lng):
 def getNearbyBins(ne_lat, ne_lng, sw_lat, sw_lng):
     delta_lng = ne_lng - sw_lng
     delta_lat = ne_lat - sw_lat
-    ne_lng += delta_lng
-    sw_lng -= delta_lng
-    ne_lat += delta_lat
-    sw_lat -= delta_lat
+
+    if delta_lng < 1:
+        ne_lng += delta_lng
+        sw_lng -= delta_lng
+    if delta_lat < 1:
+        ne_lat += delta_lat
+        sw_lat -= delta_lat
 
     q = Bin.objects.filter(team=Team.objects.all()[0]).\
         filter(longitude__lte=ne_lng,
@@ -119,3 +125,6 @@ def getNearbyBins(ne_lat, ne_lng, sw_lat, sw_lng):
                latitude__gte=sw_lat)
 
     return q
+
+
+
