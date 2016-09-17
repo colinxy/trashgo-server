@@ -8,7 +8,7 @@ from rest_framework.views import APIView
 
 from .models import Hotspot, Team, User
 from .serializers import HotspotSerializer, TeamSerializer, UserSerializer
-from .utils import updateHotspot
+from .utils import updateHotspot, getNearbyHotspots
 
 
 # a public API? Yeah, we know, works for the demo
@@ -30,18 +30,36 @@ class HotspotView(APIView):
 
     def post(self, request, format=None):
         data = JSONParser().parse(request)
-        print(data)
+        # print(data)
 
         try:
             facebook_id = data["team"]
             user = User.objects.get(facebook_id=facebook_id)
             longitude = data["longitude"]
-            latitude  = data["latitude"]
+            latitude = data["latitude"]
         except User.DoesNotExist:
             return Response(status=status.HTTP_404_NOT_FOUND)
+        except:
+            return Response(status=status.HTTP_400_BAD_REQUEST)
 
         updateHotspot(user, longitude, latitude)
         return Response(status=status.HTTP_201_CREATED)
+
+
+class HotspotWithinView(APIView):
+    def get(self, request, ne_lat, ne_lng, sw_lat, sw_lng, format=None):
+        print(ne_lat, ne_lng, sw_lat, sw_lng)
+
+        try:
+            ne_lat, ne_lng, sw_lat, sw_lng = \
+                map(float, (ne_lat, ne_lng, sw_lat, sw_lng))
+        except ValueError:
+            return Response(status=status.HTTP_400_BAD_REQUEST)
+
+        serializer = HotspotSerializer(getNearbyHotspots(ne_lat, ne_lng,
+                                                         sw_lat, sw_lng),
+                                       many=True)
+        return Response(serializer.data)
 
 
 class TeamView(APIView):
@@ -52,9 +70,6 @@ class TeamView(APIView):
         teams = Team.objects.all()
         serializer = TeamSerializer(teams, many=True)
         return Response(serializer.data)
-
-    def post(self, request, format=None):
-        pass
 
 
 class UserView(APIView):

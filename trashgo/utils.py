@@ -65,7 +65,8 @@ http://stackoverflow.com/questions/14285963/google-maps-get-viewport-latitude-an
 bounds is a 4-tuple containing NE Lat, NE Lng, SW Lat, SW Lng
 """
 
-def getNearbyHotspots(ne_lat, ne_lng, sw_lat, sw_lng, scale = 1.0):
+
+def getNearbyHotspots(ne_lat, ne_lng, sw_lat, sw_lng):
     delta_lng = ne_lng - sw_lng
     delta_lat = ne_lat - sw_lat
     ne_lng += delta_lng
@@ -74,8 +75,8 @@ def getNearbyHotspots(ne_lat, ne_lng, sw_lat, sw_lng, scale = 1.0):
     sw_lat -= delta_lat
 
     q = Hotspot.objects.filter(longitude__lte=ne_lng,
-                           longitude__gte=sw_lng,
-                           latitude__lte = ne_lat,
-                           latitude__gte=sw_lat)
+                               longitude__gte=sw_lng,
+                               latitude__lte=ne_lat,
+                               latitude__gte=sw_lat)
 
     return q
