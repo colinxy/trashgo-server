@@ -7,6 +7,11 @@ from .models import Hotspot, Team, User
 class HotspotSerializer(ModelSerializer):
     class Meta:
         model = Hotspot
+        fields = ("longitude", "latitude")
+
+class BinSerializer(ModelSerializer):
+    class Meta:
+        model = Bin
         fields = ("longitude", "latitude", "team")
 
 
