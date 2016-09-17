@@ -82,4 +82,14 @@ class UserView(APIView):
         return Response(serializer.data)
 
     def post(self, request, format=None):
-        pass
+        data = JSONParser().parse(request)
+        print(data)
+
+        user = User(user_name = data["user_name"],
+                    team = data["team"],
+                    facebook_id = data["facebook_id"],
+                    points = 0)
+
+        return Response(status=status.HTTP_201_CREATED)
+
+
