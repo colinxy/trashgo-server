@@ -9,7 +9,7 @@ from rest_framework.views import APIView
 from .models import Bin, Hotspot, Team, User
 from .serializers import (HotspotSerializer, TeamSerializer,
                           UserSerializer, BinSerializer)
-from .utils import updateHotspot, getNearbyHotspots, updateBin
+from .utils import updateHotspot, getNearbyHotspots, updateBin, getNearbyBins
 
 
 # a public API? Yeah, we know, works for the demo
@@ -103,10 +103,9 @@ class BinWithinView(APIView):
             return Response(status=status.HTTP_400_BAD_REQUEST)
 
         serializer = BinSerializer(getNearbyBins(ne_lat, ne_lng,
-                                                         sw_lat, sw_lng),
-                                       many=True)
+                                                 sw_lat, sw_lng),
+                                   many=True)
         return Response(serializer.data)
-
 
 
 class TeamView(APIView):
