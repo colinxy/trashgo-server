@@ -22,9 +22,9 @@ def findCustomerByName(username):
         for obj in response.json():
             if obj['first_name'] == first_name and obj['last_name'] == last_name:
                 return obj['_id']
-    else:                       # failure,
-        print("Failure: can't find customer")
-        return -1               # if customer is not found
+
+    print("Failure: can't find customer")
+    return -1               
 
 
 def createCustomer(username):
@@ -102,8 +102,8 @@ def getAccount(username):
         print('got account')
         obj = response.json()
         return (obj[0]['_id'], obj[0]['rewards'])
-    else:
-        return -1               # if can't get account
+    
+
 
 
 def depositPoints(accountId, points):
@@ -131,6 +131,3 @@ def rewardCustomer(username, points):
     (accountId, rewards) = getAccount(username)
     depositPoints(accountId, points)
 
-# rewardCustomer("John Ho", 50)
-
-# findCustomerByName("Mandela Patrick")
