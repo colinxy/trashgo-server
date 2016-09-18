@@ -9,7 +9,7 @@ from rest_framework.views import APIView
 from .models import Bin, Hotspot, Team, User
 from .serializers import (HotspotSerializer, TeamSerializer,
                           UserSerializer, BinSerializer)
-from .utils import updateHotspot, getNearbyHotspots, updateBin, getNearbyBins
+from .utils import updateHotspot, getNearbyHotspots, updateBin, getNearbyBins, submitTrash
 
 
 # a public API? Yeah, we know, works for the demo
@@ -72,8 +72,28 @@ class BinView(APIView):
         except:
             return Response(status=status.HTTP_400_BAD_REQUEST)
 
-        updateBin(user, longitude, latitude)
-        return Response(data, status=status.HTTP_201_CREATED)
+        success = updateBin(user, longitude, latitude)
+        return Response({'success': success}, status=status.HTTP_201_CREATED)
+
+
+class SubmitTrash(APIView):
+    authentication_classes = (CsrfExemptSessionAuthentication,
+                              BasicAuthentication)
+
+    def post(self, request, format=None):
+        data = request.POST
+        try:
+            facebook_id = str(data["team"])
+            longitude = float(data["longitude"])
+            latitude = float(data["latitude"])
+            user = User.objects.get(facebook_id=facebook_id)
+        except User.DoesNotExist:
+            return Response(status=status.HTTP_404_NOT_FOUND)
+        except:
+            return Response(status=status.HTTP_400_BAD_REQUEST)
+
+        success = submitTrash(user, longitude, latitude)
+        return Response({'success': success}, status=status.HTTP_201_CREATED)
 
 
 class HotspotWithinView(APIView):
