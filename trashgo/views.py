@@ -55,26 +55,24 @@ class BinView(APIView):
     def get(self, request, format=None):
         hotspots = Bin.objects.all()
         serializer = BinSerializer(hotspots, many=True)
-
         # print(serializer)
         return Response(serializer.data)
 
     def post(self, request, format=None):
-        data = JSONParser().parse(request)
-        # print(data)
-
+        data = request.POST
+        print(data)
         try:
-            facebook_id = data["team"]
+            facebook_id = str(data["team"][0])
             user = User.objects.get(facebook_id=facebook_id)
-            longitude = data["longitude"]
-            latitude = data["latitude"]
+            longitude = float(data["longitude"][0])
+            latitude = float(data["latitude"][0])
         except User.DoesNotExist:
-            return Response(status=status.HTTP_404_NOT_FOUND)
+            return Response(status=status.HTTP_400_BAD_REQUEST)
         except:
             return Response(status=status.HTTP_400_BAD_REQUEST)
 
         updateBin(user, longitude, latitude)
-        return Response(status=status.HTTP_201_CREATED)
+        return Response(data, status=status.HTTP_201_CREATED)
 
 
 class HotspotWithinView(APIView):
@@ -114,7 +112,7 @@ class BinWithinView(APIView):
 
 class UserWithId(APIView):
     def get(self, request, facebook_id):
-        user = User.objects.get(facebook_id=facebook_id)
+        user = User.objects.get(facebookid=facebook_id)
         serializer = UserSerializer(user)
         return Response(serializer.data)
 
