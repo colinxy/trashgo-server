@@ -1,13 +1,16 @@
 from math import radians, cos, sin, asin, sqrt
 from .models import Team, Hotspot, Bin
 from .capitalone import rewardCustomer, purchaseReward
+import json
+
 
 HOTSPOT_RADIUS = 20
 BIN_RADIUS = 10
 
-POINTS_SUBMITTING_TRASH = 3
-POINTS_FINDING_BIN = 5
-POINTS_FINDING_HOTSPOT = 10
+POINTS_SUBMITTING_TRASH = 50
+POINTS_FINDING_BIN = 50
+POINTS_FINDING_HOTSPOT = 100
+POINTS_IDENTIFYING_TRASH = 10
 
 AWARD_THRESHOLD = 100
 
@@ -176,10 +179,21 @@ def getNearbyBins(ne_lat, ne_lng, sw_lat, sw_lng):
         ne_lat += delta_lat
         sw_lat -= delta_lat
 
-    q = Bin.objects.filter(team=Team.objects.all()[0]).\
-        filter(longitude__lte=ne_lng,
-               longitude__gte=sw_lng,
-               latitude__lte=ne_lat,
-               latitude__gte=sw_lat)
+    q = Bin.objects.filter(longitude__lte=ne_lng,
+                           longitude__gte=sw_lng,
+                           latitude__lte=ne_lat,
+                           latitude__gte=sw_lat)
 
-    return q
+    data = {}
+    for bin in q:
+        tuple = (bin.latitude, bin.longitude)
+        if not tuple in data:
+            data[tuple] = [0] * 3
+        data[tuple][bin.team_id - 1] = bin.frequency
+
+    print(data)
+    res = []
+    for key in data:
+        res.append({"latitude": key[0], "longitude": key[1], "frequencies": data[key]})
+    return res
+

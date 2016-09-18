@@ -152,10 +152,11 @@ class BinWithinView(APIView):
         except ValueError:
             return Response(status=status.HTTP_400_BAD_REQUEST)
 
-        serializer = BinSerializer(getNearbyBins(ne_lat, ne_lng,
-                                                 sw_lat, sw_lng),
-                                   many=True)
-        return Response(serializer.data)
+        # serializer = BinSerializer(getNearbyBins(ne_lat, ne_lng,
+        #                                          sw_lat, sw_lng),
+        #                            many=True)
+        # return Response(serializer.data)
+        return Response(getNearbyBins(ne_lat, ne_lng, sw_lat, sw_lng))
 
 
 class UserWithId(APIView):
