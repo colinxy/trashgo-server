@@ -24,12 +24,12 @@ def findCustomerByName(username):
                 return obj['_id']
 
     print("Failure: can't find customer")
-    return -1               
+    return -1
 
 
 def createCustomer(username):
     url = 'http://api.reimaginebanking.com/customers?key={}'.format(apiKey)
-    name_split = username.split()
+    name_split = username.split(" ")
     first_name = name_split[0]
     last_name = name_split[1]
 
@@ -102,7 +102,6 @@ def getAccount(username):
         print('got account')
         obj = response.json()
         return (obj[0]['_id'], obj[0]['rewards'])
-    
 
 
 
@@ -128,6 +127,8 @@ def depositPoints(accountId, points):
 # provide username as string of "firstname lastname", points is float value indicating how much points
 # user gets for doing an action
 def rewardCustomer(username, points):
+    print (username, points)
     (accountId, rewards) = getAccount(username)
     depositPoints(accountId, points)
+
 

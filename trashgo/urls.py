@@ -22,6 +22,9 @@ urlpatterns = [
          r"(?P<sw_lng>-?\d+\.?\d*)/$"),
         views.BinWithinView.as_view()),
     url(r"^users/$", views.UserView.as_view()),
+    url((r"^users/"
+        r"(?P<facebook_id>\d+)/$"),
+        views.UserWithId.as_view()),
     url(r"^teams/$", views.TeamView.as_view()),
     url(r"^bins/$", views.BinView.as_view()),
 ]

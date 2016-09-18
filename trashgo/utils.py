@@ -1,7 +1,9 @@
 from math import radians, cos, sin, asin, sqrt
 from .models import Team, Hotspot, Bin
+from .capitalone import rewardCustomer
 
 HOTSPOT_RADIUS = 20
+BIN_RADIUS = 10
 
 
 def haversine(lon1, lat1, lon2, lat2):
@@ -44,6 +46,7 @@ def updateHotspot(lon1, lat1):
 
 def updateBin(user, lon1, lat1):
     # Merge location with hotspot, or create one in position
+    print ("Updatebin running...")
     hotspots = Bin.objects.filter(team=user.team)
     mindist = 1000
     target = None
@@ -51,7 +54,7 @@ def updateBin(user, lon1, lat1):
 
     for hotspot in hotspots:
         dist = haversine(lon1, lat1, hotspot.longitude, hotspot.latitude)
-        if dist < HOTSPOT_RADIUS and dist < mindist:
+        if dist < BIN_RADIUS and dist < mindist:
             mindist = dist
             target = hotspot
 
@@ -59,7 +62,7 @@ def updateBin(user, lon1, lat1):
         target.frequency += 1
         # Old site, team gets one point
         target.save()
-        pointsUp = 1
+        pointsUp = 0
 
     else:
         for team_ref in Team.objects.all():
@@ -72,10 +75,11 @@ def updateBin(user, lon1, lat1):
             newBin.save()
 
         # New site discovered. 3 points.
-        pointsUp = 3
+        pointsUp = 1
 
     user.points += pointsUp
     user.save()
+    rewardCustomer(user.user_name, pointsUp)
     user.team.points += pointsUp
     user.team.save()
 
