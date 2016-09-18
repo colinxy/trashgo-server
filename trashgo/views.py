@@ -60,7 +60,6 @@ class BinView(APIView):
 
     def post(self, request, format=None):
         data = request.POST
-        print(data)
         try:
             facebook_id = str(data["team"])
             longitude = float(data["longitude"])
@@ -113,7 +112,8 @@ class BinWithinView(APIView):
 
 class UserWithId(APIView):
     def get(self, request, facebook_id):
-        user = User.objects.get(facebookid=facebook_id)
+        print (facebook_id)
+        user = User.objects.get(facebook_id=str(facebook_id))
         serializer = UserSerializer(user)
         return Response(serializer.data)
 
