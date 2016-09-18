@@ -112,6 +112,13 @@ class BinWithinView(APIView):
         return Response(serializer.data)
 
 
+class UserWithId(APIView):
+    def get(self, request, facebook_id):
+        user = User.objects.get(facebook_id=facebook_id)
+        serializer = UserSerializer(user)
+        return Response(serializer.data)
+
+
 class TeamView(APIView):
     authentication_classes = (CsrfExemptSessionAuthentication,
                               BasicAuthentication)
