@@ -9,7 +9,7 @@ from rest_framework.views import APIView
 from .models import Bin, Hotspot, Team, User
 from .serializers import (HotspotSerializer, TeamSerializer,
                           UserSerializer, BinSerializer)
-from .utils import updateHotspot, getNearbyHotspots, updateBin, getNearbyBins, submitTrash
+from .utils import updateHotspot, getNearbyHotspots, updateBin, getNearbyBins, submitTrash, makePurchase
 
 
 # a public API? Yeah, we know, works for the demo
@@ -73,6 +73,32 @@ class BinView(APIView):
             return Response(status=status.HTTP_400_BAD_REQUEST)
 
         success = updateBin(user, longitude, latitude)
+        return Response({'success': success}, status=status.HTTP_201_CREATED)
+
+
+class RewardView(APIView):
+    authentication_classes = (CsrfExemptSessionAuthentication,
+                              BasicAuthentication)
+
+    def post(self, request, format=None):
+        data = request.POST
+        try:
+            facebook_id = str(data["team"])
+            user = User.objects.get(facebook_id=facebook_id)
+            price = int(data["price"])
+            description = str(data["description"])
+        except User.DoesNotExist:
+            return Response(status=status.HTTP_404_NOT_FOUND)
+        except:
+            return Response(status=status.HTTP_400_BAD_REQUEST)
+
+        success = makePurchase(user, price, description)
+
+        if success:
+            print("{} has redeemed {} at {} successfully".format(user, price, description))
+        else:
+            print ("Transaction unapproved.")
+
         return Response({'success': success}, status=status.HTTP_201_CREATED)
 
 

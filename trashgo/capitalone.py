@@ -131,4 +131,27 @@ def rewardCustomer(username, points):
     (accountId, rewards) = getAccount(username)
     depositPoints(accountId, points)
 
+def purchaseReward(username, price, description):
+    MERCHANT_ID = "57de1b64e63c5995587e8e03"
+    (accountId, rewards) = getAccount(username)
+    url = 'http://api.reimaginebanking.com/accounts/{}/purchases?key={}'.format(accountId, apiKey)
+    purchase = {
+          "merchant_id":MERCHANT_ID,
+          "medium": "rewards",
+          "purchase_date": "2016-09-18",
+          "amount": price,
+          "description": description
+    }
+    response = requests.post(
+        url,
+        data=json.dumps(purchase),
+        headers={'content-type': 'application/json'},
+    )
+
+    if response.status_code == 201:
+        print(username, 'redeemed ', description, 'at', price, 'points.')
+    else:
+        print(response)
+    return True
+
 

@@ -1,6 +1,6 @@
 from math import radians, cos, sin, asin, sqrt
 from .models import Team, Hotspot, Bin
-from .capitalone import rewardCustomer
+from .capitalone import rewardCustomer, purchaseReward
 
 HOTSPOT_RADIUS = 20
 BIN_RADIUS = 10
@@ -91,6 +91,16 @@ def updateBin(user, lon1, lat1):
     user.team.points += pointsUp
     user.team.save()
     return True
+
+
+def makePurchase(user, price, description):
+    if price <= user.points:
+        user.points -= price
+        purchaseReward(user.user_name, price, description)
+        user.save()
+        return True
+    else:
+        return False
 
 
 def submitTrash(user, lon1, lat1):
