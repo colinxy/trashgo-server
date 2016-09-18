@@ -9,7 +9,8 @@ from rest_framework.views import APIView
 from .models import Bin, Hotspot, Team, User
 from .serializers import (HotspotSerializer, TeamSerializer,
                           UserSerializer, BinSerializer)
-from .utils import updateHotspot, getNearbyHotspots, updateBin, getNearbyBins, submitTrash, makePurchase
+from .utils import (updateHotspot, getNearbyHotspots, updateBin,
+                    getNearbyBins, submitTrash, makePurchase)
 
 
 # a public API? Yeah, we know, works for the demo
