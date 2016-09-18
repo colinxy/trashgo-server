@@ -30,21 +30,22 @@ class HotspotView(APIView):
         return Response(serializer.data)
 
     def post(self, request, format=None):
-        data = JSONParser().parse(request)
-        # print(data)
+        # data = JSONParser().parse(request)
+        data = request.POST
+        print(data)
 
         try:
             # facebook_id = data["team"]
             # user = User.objects.get(facebook_id=facebook_id)
-            longitude = data["longitude"]
-            latitude = data["latitude"]
+            longitude = float(data["longitude"][0])
+            latitude = float(data["latitude"][0])
         except User.DoesNotExist:
             return Response(status=status.HTTP_404_NOT_FOUND)
         except:
             return Response(status=status.HTTP_400_BAD_REQUEST)
 
         updateHotspot(longitude, latitude)
-        return Response(status=status.HTTP_201_CREATED)
+        return Response({}, status=status.HTTP_201_CREATED)
 
 
 class BinView(APIView):
