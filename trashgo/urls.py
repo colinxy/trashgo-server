@@ -27,6 +27,7 @@ urlpatterns = [
         views.UserWithId.as_view()),
     url(r"^teams/$", views.TeamView.as_view()),
     url(r"^bins/$", views.BinView.as_view()),
+    url(r"^trash/$", views.SubmitTrash.as_view())
 ]
 
 # urlpatterns = format_suffix_patterns(urlpatterns)

@@ -9,7 +9,7 @@ from rest_framework.views import APIView
 from .models import Bin, Hotspot, Team, User
 from .serializers import (HotspotSerializer, TeamSerializer,
                           UserSerializer, BinSerializer)
-from .utils import updateHotspot, getNearbyHotspots, updateBin, getNearbyBins
+from .utils import updateHotspot, getNearbyHotspots, updateBin, getNearbyBins, submitTrash
 
 
 # a public API? Yeah, we know, works for the demo
@@ -44,14 +44,13 @@ class HotspotView(APIView):
         except:
             return Response(status=status.HTTP_400_BAD_REQUEST)
 
-        updateHotspot(longitude, latitude)
-        return Response({}, status=status.HTTP_201_CREATED)
+        success = updateHotspot(longitude, latitude)
+        return Response({'success':success}, status=status.HTTP_201_CREATED)
 
 
 class BinView(APIView):
     authentication_classes = (CsrfExemptSessionAuthentication,
                               BasicAuthentication)
-
     def get(self, request, format=None):
         hotspots = Bin.objects.all()
         serializer = BinSerializer(hotspots, many=True)
@@ -64,15 +63,32 @@ class BinView(APIView):
             facebook_id = str(data["team"])
             longitude = float(data["longitude"])
             latitude = float(data["latitude"])
-            print(facebook_id, longitude, latitude)
             user = User.objects.get(facebook_id=facebook_id)
         except User.DoesNotExist:
             return Response(status=status.HTTP_404_NOT_FOUND)
         except:
             return Response(status=status.HTTP_400_BAD_REQUEST)
 
-        updateBin(user, longitude, latitude)
-        return Response(data, status=status.HTTP_201_CREATED)
+        success = updateBin(user, longitude, latitude)
+        return Response({'success':success} , status=status.HTTP_201_CREATED)
+
+
+class SubmitTrash(APIView):
+    authentication_classes = (CsrfExemptSessionAuthentication,
+                              BasicAuthentication)
+    def post(self, request, format=None):
+        data = request.POST
+        try:
+            facebook_id = str(data["team"])
+            longitude = float(data["longitude"])
+            latitude = float(data["latitude"])
+            user = User.objects.get(facebook_id=facebook_id)
+        except User.DoesNotExist:
+            return Response(status=status.HTTP_404_NOT_FOUND)
+        except:
+            return Response(status=status.HTTP_400_BAD_REQUEST)
+
+        submitTrash(user, longitude, latitude)
 
 
 class HotspotWithinView(APIView):
@@ -148,3 +164,6 @@ class UserView(APIView):
         user.save()
 
         return Response(status=status.HTTP_201_CREATED)
+
+
+

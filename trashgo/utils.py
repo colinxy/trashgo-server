@@ -4,7 +4,9 @@ from .capitalone import rewardCustomer
 
 HOTSPOT_RADIUS = 20
 BIN_RADIUS = 10
-
+POINTS_SUBMITTING_TRASH = 1
+POINTS_FINDING_BIN = 3
+POINTS_FINDING_HOTSPOT = 5
 
 def haversine(lon1, lat1, lon2, lat2):
     """
@@ -22,7 +24,7 @@ def haversine(lon1, lat1, lon2, lat2):
     return m
 
 
-def updateHotspot(lon1, lat1):
+def updateHotspot(user, lon1, lat1):
     hotspots = Hotspot.objects.all()
     mindist = 1000
     target = None
@@ -43,10 +45,54 @@ def updateHotspot(lon1, lat1):
                              frequency=1)
         newHotspot.save()
 
+    pointsUp = POINTS_FINDING_HOTSPOT
+    user.points += pointsUp
+    user.save()
+    rewardCustomer(user.user_name, pointsUp)
+    user.team.points += pointsUp
+    user.team.save()
+
+"""
+Declare the discovery of a new bin
+"""
 
 def updateBin(user, lon1, lat1):
     # Merge location with hotspot, or create one in position
-    print ("Updatebin running...")
+    hotspots = Bin.objects.filter(team=user.team)
+    mindist = 1000
+    target = None
+    pointsUp = 0
+
+    for hotspot in hotspots:
+        dist = haversine(lon1, lat1, hotspot.longitude, hotspot.latitude)
+        if dist < BIN_RADIUS and dist < mindist:
+            mindist = dist
+            target = hotspot
+
+    if target is not None:
+        return False
+
+    else:
+        for team_ref in Team.objects.all():
+            newBin = Bin(longitude=lon1,
+                         latitude=lat1,
+                         frequency=0,
+                         team=team_ref)
+            newBin.save()
+
+        # New site discovered. 3 points.
+        pointsUp = POINTS_FINDING_HOTSPOT
+
+    user.points += pointsUp
+    user.save()
+    rewardCustomer(user.user_name, pointsUp)
+    user.team.points += pointsUp
+    user.team.save()
+    return True
+
+
+def submitTrash(user, lon1, lat1):
+    # Merge location with hotspot, or create one in position
     hotspots = Bin.objects.filter(team=user.team)
     mindist = 1000
     target = None
@@ -62,26 +108,19 @@ def updateBin(user, lon1, lat1):
         target.frequency += 1
         # Old site, team gets one point
         target.save()
-        pointsUp = 0
+        pointsUp = POINTS_SUBMITTING_TRASH
 
     else:
-        for team_ref in Team.objects.all():
-            newBin = Bin(longitude=lon1,
-                         latitude=lat1,
-                         frequency=0,
-                         team=team_ref)
-            if team_ref == user.team:
-                newBin.frequency += 1
-            newBin.save()
-
-        # New site discovered. 3 points.
-        pointsUp = 1
+        # Cannot submit trash in unregistered bins
+        return False
 
     user.points += pointsUp
     user.save()
     rewardCustomer(user.user_name, pointsUp)
     user.team.points += pointsUp
     user.team.save()
+
+    return True
 
 """
 Get related points according to the current bounds
