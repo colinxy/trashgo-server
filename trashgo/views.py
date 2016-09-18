@@ -37,8 +37,8 @@ class HotspotView(APIView):
         try:
             # facebook_id = data["team"]
             # user = User.objects.get(facebook_id=facebook_id)
-            longitude = float(data["longitude"][0])
-            latitude = float(data["latitude"][0])
+            longitude = float(data["longitude"])
+            latitude = float(data["latitude"])
         except User.DoesNotExist:
             return Response(status=status.HTTP_404_NOT_FOUND)
         except:
@@ -62,12 +62,13 @@ class BinView(APIView):
         data = request.POST
         print(data)
         try:
-            facebook_id = str(data["team"][0])
+            facebook_id = str(data["team"])
+            longitude = float(data["longitude"])
+            latitude = float(data["latitude"])
+            print(facebook_id, longitude, latitude)
             user = User.objects.get(facebook_id=facebook_id)
-            longitude = float(data["longitude"][0])
-            latitude = float(data["latitude"][0])
         except User.DoesNotExist:
-            return Response(status=status.HTTP_400_BAD_REQUEST)
+            return Response(status=status.HTTP_404_NOT_FOUND)
         except:
             return Response(status=status.HTTP_400_BAD_REQUEST)
 
